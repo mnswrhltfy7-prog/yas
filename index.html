@@ -2,61 +2,1909 @@
 <html lang="fa" dir="rtl">
 <head>
   <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#0b1020">
-  <title>بازی مار</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <meta name="theme-color" content="#0f172a">
+  <title>مار رنگین‌کمان — بازی دقیق با ثبت خطا و برد</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800&display=swap');
-    :root{color-scheme:dark;--bg:#0b1020;--panel:#111a2d;--muted:#8e9bb5;--lime:#a3e635;--cyan:#22d3ee;--line:#26334b}
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% 0%,#172644 0,transparent 55%),var(--bg);color:#f4f7ff;font-family:'Vazirmatn',Tahoma,sans-serif;display:grid;place-items:center;padding:24px}
-    .shell{width:min(100%,580px)}header{display:flex;justify-content:space-between;align-items:center;margin-bottom:18px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:15px;background:#1d2c16;display:grid;place-items:center;font-size:25px;box-shadow:inset 0 0 0 1px #3e5d25}.brand h1{font-size:20px;margin:0;font-weight:800;letter-spacing:-.4px}.brand p{margin:2px 0 0;color:var(--muted);font-size:12px}.stats{display:flex;gap:10px}.stat{background:#121c30;border:1px solid var(--line);padding:7px 14px;border-radius:13px;text-align:center;min-width:76px}.stat small{display:block;color:var(--muted);font-size:10px}.stat strong{font-size:18px;color:var(--lime);line-height:1.3}
-    .game-card{background:linear-gradient(145deg,#121c30,#0f1728);border:1px solid #26344d;border-radius:22px;padding:14px;box-shadow:0 24px 70px #0006}.board-wrap{position:relative;overflow:hidden;border-radius:14px;background:#0b1321;line-height:0}canvas{display:block;width:100%;height:auto;aspect-ratio:1;touch-action:none}.overlay{position:absolute;inset:0;display:grid;place-items:center;background:#08101bcc;backdrop-filter:blur(4px);text-align:center;padding:24px;line-height:1.6}.overlay.hidden{display:none}.overlay-box h2{margin:0 0 4px;font-size:26px}.overlay-box p{color:#a8b4ca;margin:0 0 16px;font-size:14px}.button{border:0;background:var(--lime);color:#18250b;border-radius:12px;padding:10px 22px;font:700 14px inherit;font-family:inherit;font-weight:800;cursor:pointer;transition:transform .15s,filter .15s}.button:hover{filter:brightness(1.08);transform:translateY(-1px)}.button.secondary{background:#202d43;color:#e5edf9;border:1px solid #35445d}.bar{display:flex;align-items:center;justify-content:space-between;padding:13px 4px 1px;color:var(--muted);font-size:12px}.bar .keys{display:flex;gap:6px;align-items:center}kbd{font:inherit;color:#d9e3f5;background:#1b2840;border:1px solid #33435f;border-radius:5px;padding:1px 6px}.actions{display:flex;gap:8px}.actions button{font:inherit;font-size:12px;padding:6px 12px;border-radius:9px}.mobile-controls{display:none;margin:16px auto 0;width:156px;grid-template-columns:repeat(3,48px);grid-template-rows:repeat(2,44px);gap:6px;direction:ltr}.mobile-controls button{border:1px solid #33445f;background:#17243a;color:#e5edf9;border-radius:12px;font-size:20px;touch-action:manipulation}.mobile-controls button:active{background:#2a3b55}.up{grid-column:2}.left{grid-column:1;grid-row:2}.down{grid-column:2;grid-row:2}.right{grid-column:3;grid-row:2}.hint{text-align:center;margin:14px 0 0;color:#73819b;font-size:11px}
-    @media(max-width:520px){body{padding:16px}.game-card{padding:10px;border-radius:18px}.stats{gap:6px}.stat{min-width:62px;padding:6px 9px}.brand h1{font-size:17px}.brand p{font-size:11px}.mobile-controls{display:grid}.bar .keys{display:none}.bar{justify-content:space-between}}
+    @import url('https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700;800;900&display=swap');
+
+    :root {
+      --bg-dark: #090d1a;
+      --card-bg: rgba(19, 27, 48, 0.85);
+      --card-border: rgba(148, 163, 184, 0.16);
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --emerald: #10b981;
+      --cyan: #06b6d4;
+      --amber: #f59e0b;
+      --rose: #f43f5e;
+      --violet: #8b5cf6;
+      --lime: #a3e635;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      min-height: 100vh;
+      background:
+        radial-gradient(circle at 12% 18%, rgba(139, 92, 246, 0.24), transparent 36%),
+        radial-gradient(circle at 88% 15%, rgba(6, 182, 212, 0.22), transparent 38%),
+        radial-gradient(circle at 50% 92%, rgba(244, 63, 94, 0.18), transparent 42%),
+        linear-gradient(160deg, #070b16 0%, #0f172a 55%, #090d1a 100%);
+      color: var(--text-main);
+      font-family: 'Vazirmatn', Tahoma, system-ui, sans-serif;
+      padding: 20px 16px 32px;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-x: hidden;
+    }
+
+    .app-container {
+      width: min(100%, 1080px);
+      display: grid;
+      grid-template-columns: 1.35fr 1fr;
+      gap: 20px;
+      align-items: start;
+    }
+
+    /* Glass Panels */
+    .panel {
+      background: var(--card-bg);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--card-border);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 20px 55px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    /* Header */
+    .top-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-icon {
+      width: 50px;
+      height: 50px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #22c55e, #06b6d4, #8b5cf6);
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      box-shadow: 0 8px 24px rgba(6, 182, 212, 0.35);
+    }
+
+    .brand h1 {
+      font-size: 21px;
+      font-weight: 900;
+      background: linear-gradient(90deg, #a3e635, #22d3ee, #c084fc);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      line-height: 1.3;
+    }
+
+    .brand p {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+
+    .theme-selector {
+      display: flex;
+      gap: 6px;
+      background: rgba(9, 13, 26, 0.65);
+      padding: 5px;
+      border-radius: 14px;
+      border: 1px solid var(--card-border);
+    }
+
+    .theme-btn {
+      border: 0;
+      padding: 6px 11px;
+      border-radius: 10px;
+      font-family: inherit;
+      font-size: 11.5px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--text-muted);
+      background: transparent;
+      transition: all 0.2s ease;
+    }
+
+    .theme-btn.active {
+      color: #090d1a;
+      background: linear-gradient(135deg, #a3e635, #22d3ee);
+      box-shadow: 0 4px 12px rgba(34, 211, 238, 0.3);
+    }
+
+    /* Stats Strip */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .stat-box {
+      background: rgba(11, 17, 32, 0.78);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 16px;
+      padding: 10px 8px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .stat-box::after {
+      content: '';
+      position: absolute;
+      inset: auto 0 0 0;
+      height: 3px;
+      background: var(--accent, var(--cyan));
+    }
+
+    .stat-box small {
+      display: block;
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .stat-box strong {
+      font-size: 20px;
+      font-weight: 800;
+      color: var(--accent, #fff);
+    }
+
+    /* Progress Bar to Win */
+    .progress-wrap {
+      margin-bottom: 14px;
+      background: rgba(11, 17, 32, 0.78);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 14px;
+      padding: 9px 13px;
+    }
+
+    .progress-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .progress-top span:first-child {
+      color: #e2e8f0;
+      font-weight: 700;
+    }
+
+    .progress-top span:last-child {
+      color: var(--lime);
+      font-weight: 800;
+    }
+
+    .progress-track {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #10b981, #22d3ee, #a855f7, #ec4899);
+      background-size: 200% 100%;
+      animation: gradientShift 3s linear infinite;
+      transition: width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* Game Canvas Area */
+    .board-container {
+      position: relative;
+      border-radius: 18px;
+      overflow: hidden;
+      border: 2px solid rgba(148, 163, 184, 0.22);
+      box-shadow: 0 12px 38px rgba(0, 0, 0, 0.55);
+      line-height: 0;
+      background: #0a1020;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: auto;
+      aspect-ratio: 1 / 1;
+      touch-action: none;
+    }
+
+    /* Overlay */
+    .overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(8, 13, 26, 0.82);
+      backdrop-filter: blur(7px);
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      text-align: center;
+      z-index: 10;
+      transition: opacity 0.2s ease;
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    .overlay-card {
+      max-width: 370px;
+      width: 100%;
+      background: rgba(19, 29, 54, 0.92);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 22px;
+      padding: 24px 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      line-height: 1.65;
+    }
+
+    .badge-status {
+      display: inline-block;
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .badge-ready { background: rgba(34, 211, 238, 0.18); color: #22d3ee; border: 1px solid rgba(34, 211, 238, 0.35); }
+    .badge-win   { background: rgba(16, 185, 129, 0.22); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.45); }
+    .badge-error { background: rgba(244, 63, 94, 0.22); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.45); }
+    .badge-pause { background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.45); }
+
+    .overlay-card h2 {
+      font-size: 25px;
+      font-weight: 900;
+      margin-bottom: 6px;
+    }
+
+    .overlay-card p {
+      font-size: 13.5px;
+      color: #cbd5e1;
+      margin-bottom: 14px;
+    }
+
+    .diagnostic-box {
+      background: rgba(9, 13, 26, 0.78);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-bottom: 16px;
+      text-align: right;
+      font-size: 12px;
+      color: #e2e8f0;
+    }
+
+    .diagnostic-box.hidden {
+      display: none;
+    }
+
+    .diagnostic-row {
+      display: flex;
+      justify-content: space-between;
+      padding: 3px 0;
+      border-bottom: 1px dashed rgba(148, 163, 184, 0.12);
+    }
+
+    .diagnostic-row:last-child {
+      border-bottom: 0;
+    }
+
+    .diagnostic-row span:first-child {
+      color: var(--text-muted);
+    }
+
+    .diagnostic-row strong {
+      font-weight: 700;
+      direction: ltr;
+    }
+
+    /* Buttons */
+    .btn-row {
+      display: flex;
+      gap: 8px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      border: 0;
+      border-radius: 13px;
+      padding: 10px 20px;
+      font-family: inherit;
+      font-size: 13.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: transform 0.14s ease, filter 0.14s ease;
+    }
+
+    .btn:hover {
+      filter: brightness(1.08);
+      transform: translateY(-1px);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #a3e635, #10b981);
+      color: #071910;
+      box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-secondary {
+      background: rgba(30, 41, 59, 0.9);
+      color: #e2e8f0;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+    }
+
+    .btn-danger {
+      background: rgba(244, 63, 94, 0.16);
+      color: #fda4af;
+      border: 1px solid rgba(244, 63, 94, 0.32);
+    }
+
+    /* Bottom Control Bar */
+    .controls-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      margin-top: 14px;
+      flex-wrap: wrap;
+    }
+
+    .settings-inline {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .select-pill {
+      background: rgba(11, 17, 32, 0.85);
+      color: #f1f5f9;
+      border: 1px solid rgba(148, 163, 184, 0.24);
+      border-radius: 11px;
+      padding: 6px 10px;
+      font-family: inherit;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .kbd-hint {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    kbd {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 6px;
+      padding: 1px 6px;
+      font-size: 11px;
+      color: #e2e8f0;
+    }
+
+    /* Mobile D-Pad */
+    .dpad {
+      display: none;
+      margin: 16px auto 4px;
+      width: 168px;
+      grid-template-columns: repeat(3, 52px);
+      grid-template-rows: repeat(2, 48px);
+      gap: 6px;
+      direction: ltr;
+    }
+
+    .dpad button {
+      border-radius: 14px;
+      border: 1px solid rgba(148, 163, 184, 0.25);
+      background: linear-gradient(145deg, #1e293b, #0f172a);
+      color: #f8fafc;
+      font-size: 20px;
+      cursor: pointer;
+      touch-action: manipulation;
+      box-shadow: 0 6px 15px rgba(0,0,0,0.35);
+    }
+
+    .dpad button:active {
+      background: linear-gradient(145deg, #22d3ee, #8b5cf6);
+      color: #090d1a;
+    }
+
+    .dpad .up    { grid-column: 2; grid-row: 1; }
+    .dpad .left  { grid-column: 1; grid-row: 2; }
+    .dpad .down  { grid-column: 2; grid-row: 2; }
+    .dpad .right { grid-column: 3; grid-row: 2; }
+
+    /* Right Side Analytics & Precision Log */
+    .side-column {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title h3 {
+      font-size: 16px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    /* Precision Telemetry Grid */
+    .telemetry-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+    }
+
+    .telemetry-card {
+      background: rgba(11, 17, 32, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 14px;
+      padding: 11px 12px;
+    }
+
+    .telemetry-card .label {
+      font-size: 11.5px;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .telemetry-card .val {
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    .error-breakdown {
+      margin-top: 12px;
+      background: rgba(11, 17, 32, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.14);
+      border-radius: 14px;
+      padding: 12px;
+    }
+
+    .error-breakdown h4 {
+      font-size: 12.5px;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .err-bars {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .err-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      gap: 8px;
+    }
+
+    .err-item .name {
+      min-width: 115px;
+      color: #cbd5e1;
+    }
+
+    .err-bar-bg {
+      flex: 1;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.07);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+
+    .err-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      transition: width 0.3s ease;
+    }
+
+    .err-count {
+      min-width: 28px;
+      text-align: left;
+      font-weight: 800;
+      font-size: 12px;
+    }
+
+    /* Live Event & Collision History Log */
+    .log-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 315px;
+      overflow-y: auto;
+      padding-left: 4px;
+    }
+
+    .log-list::-webkit-scrollbar {
+      width: 5px;
+    }
+
+    .log-list::-webkit-scrollbar-thumb {
+      background: rgba(148, 163, 184, 0.28);
+      border-radius: 99px;
+    }
+
+    .log-entry {
+      background: rgba(11, 17, 32, 0.8);
+      border-right: 4px solid var(--cyan);
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 12px;
+      line-height: 1.55;
+      border-top: 1px solid rgba(148, 163, 184, 0.1);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
+      border-left: 1px solid rgba(148, 163, 184, 0.1);
+    }
+
+    .log-entry.win {
+      border-right-color: var(--emerald);
+      background: rgba(16, 185, 129, 0.09);
+    }
+
+    .log-entry.error {
+      border-right-color: var(--rose);
+      background: rgba(244, 63, 94, 0.09);
+    }
+
+    .log-entry.warn {
+      border-right-color: var(--amber);
+      background: rgba(245, 158, 11, 0.08);
+    }
+
+    .log-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 3px;
+      font-weight: 800;
+    }
+
+    .log-time {
+      font-size: 10.5px;
+      color: var(--text-muted);
+      font-weight: 500;
+      direction: ltr;
+    }
+
+    .log-meta {
+      font-size: 11px;
+      color: #94a3b8;
+    }
+
+    .empty-log {
+      text-align: center;
+      color: var(--text-muted);
+      padding: 26px 10px;
+      font-size: 12.5px;
+    }
+
+    @media (max-width: 900px) {
+      .app-container {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 560px) {
+      body {
+        padding: 12px 10px 26px;
+      }
+      .panel {
+        padding: 14px;
+        border-radius: 20px;
+      }
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .dpad {
+        display: grid;
+      }
+      .kbd-hint {
+        display: none;
+      }
+    }
   </style>
 </head>
 <body>
-  <main class="shell">
-    <header>
-      <div class="brand"><div class="logo">🐍</div><div><h1>مارِ گرسنه</h1><p>تا می‌تونی سیب جمع کن!</p></div></div>
-      <div class="stats"><div class="stat"><small>امتیاز</small><strong id="score">۰</strong></div><div class="stat"><small>رکورد</small><strong id="best">۰</strong></div></div>
-    </header>
-    <section class="game-card" aria-label="بازی مار">
-      <div class="board-wrap">
-        <canvas id="board" width="480" height="480" aria-label="صفحه بازی"></canvas>
-        <div class="overlay" id="overlay"><div class="overlay-box"><h2 id="overlayTitle">آماده‌ای؟</h2><p id="overlayText">با خوردن سیب‌ها بزرگ‌تر شو، ولی به دیوار و خودت نخور!</p><button class="button" id="startBtn">شروع بازی</button></div></div>
+
+  <main class="app-container">
+    <!-- Left / Main Game Column -->
+    <section class="panel" aria-label="صفحه اصلی بازی مار">
+      <div class="top-header">
+        <div class="brand">
+          <div class="brand-icon">🐍</div>
+          <div>
+            <h1>مار رنگین‌کمان دقیق</h1>
+            <p>صفحه تمام‌رنگی + سامانه ثبت دقیق خطا و برد</p>
+          </div>
+        </div>
+
+        <div class="theme-selector" role="group" aria-label="تم رنگی صفحه">
+          <button class="theme-btn active" data-theme="rainbow">رنگین‌کمان</button>
+          <button class="theme-btn" data-theme="neon">نئون سایبری</button>
+          <button class="theme-btn" data-theme="tropical">استوایی</button>
+        </div>
       </div>
-      <div class="bar"><span class="keys">حرکت: <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> یا <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span><div class="actions"><button class="button secondary" id="pauseBtn">توقف</button><button class="button secondary" id="restartBtn">شروع دوباره</button></div></div>
+
+      <!-- Primary Score & Win/Error Counters -->
+      <div class="stats-grid">
+        <div class="stat-box" style="--accent: #a3e635">
+          <small>امتیاز فعلی</small>
+          <strong id="scoreVal">۰</strong>
+        </div>
+        <div class="stat-box" style="--accent: #22d3ee">
+          <small>بهترین رکورد</small>
+          <strong id="bestVal">۰</strong>
+        </div>
+        <div class="stat-box" style="--accent: #10b981">
+          <small>تعداد بردها 🏆</small>
+          <strong id="winsVal">۰</strong>
+        </div>
+        <div class="stat-box" style="--accent: #f43f5e">
+          <small>خطاهای ثبت‌شده ⚠️</small>
+          <strong id="errorsVal">۰</strong>
+        </div>
+      </div>
+
+      <!-- Win Target Progress -->
+      <div class="progress-wrap">
+        <div class="progress-top">
+          <span id="targetLabel">پیشرفت تا برد مرحله (هدف: ۱۵ میوه)</span>
+          <span id="progressText">۰ از ۱۵ (۰٪)</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progressFill"></div>
+        </div>
+      </div>
+
+      <!-- Colorful Canvas -->
+      <div class="board-container">
+        <canvas id="gameCanvas" width="540" height="540" aria-label="بوم بازی مار رنگی"></canvas>
+
+        <!-- Status Overlay -->
+        <div class="overlay" id="overlay">
+          <div class="overlay-card">
+            <span class="badge-status badge-ready" id="overlayBadge">آماده شروع</span>
+            <h2 id="overlayTitle">مارِ رنگین‌کمان!</h2>
+            <p id="overlayDesc">میوه‌های رنگارنگ را جمع کن و به حد نصاب برد برس. تمام برخوردها، مختصات دقیق و خطاها با دقت بالا ثبت می‌شوند.</p>
+
+            <div class="diagnostic-box hidden" id="diagBox">
+              <div class="diagnostic-row">
+                <span>نتیجه دور:</span>
+                <strong id="diagResult">—</strong>
+              </div>
+              <div class="diagnostic-row">
+                <span>علت دقیق:</span>
+                <strong id="diagReason" style="direction:rtl">—</strong>
+              </div>
+              <div class="diagnostic-row">
+                <span>مختصات ثبت‌شده (X, Y):</span>
+                <strong id="diagCoord">—</strong>
+              </div>
+              <div class="diagnostic-row">
+                <span>زمان و دقت حرکت:</span>
+                <strong id="diagTime">—</strong>
+              </div>
+            </div>
+
+            <div class="btn-row">
+              <button class="btn btn-primary" id="startBtn">شروع بازی</button>
+              <button class="btn btn-secondary hidden" id="continueEndlessBtn">ادامه رکوردزنی بی‌نهایت</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls & Difficulty -->
+      <div class="controls-bar">
+        <div class="settings-inline">
+          <label for="goalSelect" style="font-size:12px;color:var(--text-muted)">هدف برد:</label>
+          <select id="goalSelect" class="select-pill">
+            <option value="10">سریع (۱۰ میوه)</option>
+            <option value="15" selected>استاندارد (۱۵ میوه)</option>
+            <option value="25">حرفه‌ای (۲۵ میوه)</option>
+            <option value="40">ماراتن (۴۰ میوه)</option>
+            <option value="full">پر کردن کل صفحه</option>
+          </select>
+
+          <label for="speedSelect" style="font-size:12px;color:var(--text-muted)">سرعت:</label>
+          <select id="speedSelect" class="select-pill">
+            <option value="145">آرام</option>
+            <option value="115" selected>متعادل</option>
+            <option value="85">سریع</option>
+            <option value="65">فوق‌سریع</option>
+          </select>
+
+          <label style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:4px;cursor:pointer">
+            <input type="checkbox" id="obstacleToggle"> موانع رنگی
+          </label>
+        </div>
+
+        <div class="btn-row">
+          <button class="btn btn-secondary" id="pauseBtn" style="padding:7px 13px;font-size:12px">توقف (Space)</button>
+          <button class="btn btn-secondary" id="restartBtn" style="padding:7px 13px;font-size:12px">شروع مجدد</button>
+        </div>
+      </div>
+
+      <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+        <div class="kbd-hint">
+          کنترل دقیق با صفحه‌کلید (دارای صف ورودی بدون خطا):
+          <kbd>↑</kbd><kbd>↓</kbd><kbd>←</kbd><kbd>→</kbd> یا <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd>
+        </div>
+        <span style="font-size:11.5px;color:#38bdf8" id="livePosText">موقعیت سر مار: (۹, ۹) | طول: ۳</span>
+      </div>
+
+      <!-- Mobile Touch D-Pad -->
+      <div class="dpad" aria-label="کلیدهای لمسی جهت‌نما">
+        <button class="up" data-dir="up" aria-label="بالا">▲</button>
+        <button class="left" data-dir="left" aria-label="چپ">◀</button>
+        <button class="down" data-dir="down" aria-label="پایین">▼</button>
+        <button class="right" data-dir="right" aria-label="راست">▶</button>
+      </div>
     </section>
-    <div class="mobile-controls" aria-label="دکمه‌های حرکت"><button class="up" data-dir="up" aria-label="بالا">↑</button><button class="left" data-dir="left" aria-label="چپ">←</button><button class="down" data-dir="down" aria-label="پایین">↓</button><button class="right" data-dir="right" aria-label="راست">→</button></div>
-    <p class="hint">برای مکث، کلید فاصله را بزن</p>
+
+    <!-- Right / High-Precision Win & Error Analytics Column -->
+    <aside class="side-column" aria-label="پنل ثبت دقیق خطا و برد">
+      <section class="panel">
+        <div class="section-title">
+          <h3>🎯 سامانه سنجش دقت، برد و خطا</h3>
+          <button class="btn btn-danger" id="resetStatsBtn" style="padding:5px 10px;font-size:11px">پاک‌سازی آمار</button>
+        </div>
+
+        <div class="telemetry-grid">
+          <div class="telemetry-card">
+            <div class="label"><span>نرخ برد (Win Rate)</span><span>🏆</span></div>
+            <div class="val" id="winRateVal" style="color:#34d399">۰٪</div>
+          </div>
+          <div class="telemetry-card">
+            <div class="label"><span>دقت فرمان‌ها</span><span>⚡</span></div>
+            <div class="val" id="accuracyVal" style="color:#22d3ee">۱۰۰٪</div>
+          </div>
+          <div class="telemetry-card">
+            <div class="label"><span>نزدیک به خطر (Near Miss)</span><span>🔥</span></div>
+            <div class="val" id="nearMissVal" style="color:#fbbf24">۰</div>
+          </div>
+          <div class="telemetry-card">
+            <div class="label"><span>خطای چرخش معکوس</span><span>🚫</span></div>
+            <div class="val" id="illegalTurnVal" style="color:#fb7185">۰</div>
+          </div>
+        </div>
+
+        <div class="error-breakdown">
+          <h4>تفکیک دقیق خطاهای منجر به سوختن و هشدارها:</h4>
+          <div class="err-bars">
+            <div class="err-item">
+              <span class="name">🧱 برخورد به دیوار</span>
+              <div class="err-bar-bg"><div class="err-bar-fill" id="barWall" style="width:0%;background:#f43f5e"></div></div>
+              <span class="err-count" id="cntWall">۰</span>
+            </div>
+            <div class="err-item">
+              <span class="name">🐍 برخورد به بدن خود</span>
+              <div class="err-bar-bg"><div class="err-bar-fill" id="barSelf" style="width:0%;background:#a855f7"></div></div>
+              <span class="err-count" id="cntSelf">۰</span>
+            </div>
+            <div class="err-item">
+              <span class="name">🚧 برخورد به مانع</span>
+              <div class="err-bar-bg"><div class="err-bar-fill" id="barObs" style="width:0%;background:#f59e0b"></div></div>
+              <span class="err-count" id="cntObs">۰</span>
+            </div>
+            <div class="err-item">
+              <span class="name">↩️ تلاش جهت معکوس</span>
+              <div class="err-bar-bg"><div class="err-bar-fill" id="barTurn" style="width:0%;background:#38bdf8"></div></div>
+              <span class="err-count" id="cntTurn">۰</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="section-title">
+          <h3>📋 گزارش لحظه‌ای ثبت وقایع (دقت میلی‌ثانیه)</h3>
+          <span style="font-size:11px;color:var(--text-muted)" id="totalRoundsBadge">۰ دور</span>
+        </div>
+
+        <div class="log-list" id="logList">
+          <div class="empty-log">هنوز رویدادی ثبت نشده است. بازی را شروع کنید تا بردها، خطاها و مختصات دقیق اینجا ثبت شوند!</div>
+        </div>
+      </section>
+    </aside>
   </main>
-<script>
-(() => {
-  const canvas=document.getElementById('board'),ctx=canvas.getContext('2d'),N=20,CELL=canvas.width/N;
-  const scoreEl=document.getElementById('score'),bestEl=document.getElementById('best'),overlay=document.getElementById('overlay'),title=document.getElementById('overlayTitle'),text=document.getElementById('overlayText'),startBtn=document.getElementById('startBtn');
-  const fa=n=>new Intl.NumberFormat('fa-IR').format(n);
-  let snake,food,dir,nextDir,score,best=Number(localStorage.getItem('snake-best')||0),timer=null,state='ready';
-  bestEl.textContent=fa(best);
-  function reset(){snake=[{x:9,y:10},{x:8,y:10},{x:7,y:10}];dir={x:1,y:0};nextDir={...dir};score=0;scoreEl.textContent=fa(score);placeFood();draw()}
-  function placeFood(){do{food={x:Math.floor(Math.random()*N),y:Math.floor(Math.random()*N)}}while(snake.some(s=>s.x===food.x&&s.y===food.y))}
-  function roundedRect(x,y,w,h,r){ctx.beginPath();ctx.roundRect(x,y,w,h,r);ctx.fill()}
-  function draw(){ctx.fillStyle='#0b1321';ctx.fillRect(0,0,480,480);ctx.strokeStyle='rgba(129,155,190,.055)';ctx.lineWidth=1;for(let i=0;i<=N;i++){ctx.beginPath();ctx.moveTo(i*CELL,0);ctx.lineTo(i*CELL,480);ctx.stroke();ctx.beginPath();ctx.moveTo(0,i*CELL);ctx.lineTo(480,i*CELL);ctx.stroke()}
-    // Apple
-    const fx=(food.x+.5)*CELL,fy=(food.y+.53)*CELL;ctx.shadowColor='#fb7185';ctx.shadowBlur=18;ctx.fillStyle='#fb536b';ctx.beginPath();ctx.arc(fx,fy, CELL*.33,0,Math.PI*2);ctx.fill();ctx.shadowBlur=0;ctx.fillStyle='#a3e635';ctx.beginPath();ctx.ellipse(fx+4,fy-9,5,2.5,-.55,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#a3e635';ctx.lineWidth=2;ctx.beginPath();ctx.moveTo(fx,fy-7);ctx.lineTo(fx+1,fy-12);ctx.stroke();
-    snake.forEach((s,i)=>{const pad=2.3;ctx.fillStyle=i===0?'#bef264':'#84cc16';ctx.shadowColor=i===0?'#a3e635':'transparent';ctx.shadowBlur=i===0?10:0;roundedRect(s.x*CELL+pad,s.y*CELL+pad,CELL-pad*2,CELL-pad*2,6);ctx.shadowBlur=0;if(i===0){ctx.fillStyle='#263713';const ex=fxEye(dir,true,s),ey=fxEye(dir,false,s);ctx.beginPath();ctx.arc(ex,ey,1.8,0,Math.PI*2);ctx.arc(ex+(dir.x===0?7:0),ey+(dir.y===0?7:0),1.8,0,Math.PI*2);ctx.fill()}})
-  }
-  function fxEye(d,vertical,s){return (s.x+.5)*CELL+(d.x===0?(vertical?-4:4):d.x*5)}
-  function tick(){dir={...nextDir};const head={x:snake[0].x+dir.x,y:snake[0].y+dir.y};if(head.x<0||head.x>=N||head.y<0||head.y>=N||snake.some((s,i)=>i<snake.length-1&&s.x===head.x&&s.y===head.y)){end();return}snake.unshift(head);if(head.x===food.x&&head.y===food.y){score+=10;scoreEl.textContent=fa(score);if(score>best){best=score;bestEl.textContent=fa(best);localStorage.setItem('snake-best',best)}placeFood()}else snake.pop();draw()}
-  function start(){if(state==='running')return;reset();state='running';overlay.classList.add('hidden');clearInterval(timer);timer=setInterval(tick,125)}
-  function pause(){if(state==='running'){state='paused';clearInterval(timer);show('بازی متوقف شد','هر وقت آماده‌ای ادامه بده.','ادامه بازی')}else if(state==='paused'){state='running';overlay.classList.add('hidden');timer=setInterval(tick,125)}}
-  function show(t,m,b){title.textContent=t;text.textContent=m;startBtn.textContent=b;overlay.classList.remove('hidden')}
-  function end(){clearInterval(timer);state='over';show('بازی تموم شد!','امتیازت: '+fa(score)+' — یه بار دیگه تلاش می‌کنی؟','دوباره بازی کن')}
-  const map={ArrowUp:[0,-1],w:[0,-1],W:[0,-1],ArrowDown:[0,1],s:[0,1],S:[0,1],ArrowLeft:[-1,0],a:[-1,0],A:[-1,0],ArrowRight:[1,0],d:[1,0],D:[1,0]};
-  function turn(x,y){if(x!==-dir.x||y!==-dir.y){nextDir={x,y};if(state==='ready'||state==='over')start()}}
-  document.addEventListener('keydown',e=>{if(map[e.key]){e.preventDefault();turn(...map[e.key])}else if(e.code==='Space'){e.preventDefault();pause()}});
-  document.querySelectorAll('[data-dir]').forEach(b=>b.addEventListener('pointerdown',()=>{const dirs={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0]};turn(...dirs[b.dataset.dir])}));
-  startBtn.addEventListener('click',()=>state==='paused'?pause():start());document.getElementById('pauseBtn').addEventListener('click',pause);document.getElementById('restartBtn').addEventListener('click',start);reset();
-})();
-</script>
+
+  <script>
+    (() => {
+      const canvas = document.getElementById('gameCanvas');
+      const ctx = canvas.getContext('2d');
+
+      // Grid setup: 18x18 crisp colorful grid (540px / 18 = 30px per cell)
+      const GRID = 18;
+      const CELL = canvas.width / GRID;
+
+      // Persian number formatter
+      const faNum = (n) => new Intl.NumberFormat('fa-IR').format(n);
+
+      // Colorful Themes
+      const THEMES = {
+        rainbow: {
+          bgA: '#111936',
+          bgB: '#162247',
+          gridStroke: 'rgba(255, 255, 255, 0.05)',
+          wallBorder: '#38bdf8',
+          snakeHueStart: 135,
+          snakeHueStep: 14,
+          obstacleColor: '#f59e0b'
+        },
+        neon: {
+          bgA: '#090b1a',
+          bgB: '#12102e',
+          gridStroke: 'rgba(236, 72, 153, 0.08)',
+          wallBorder: '#ec4899',
+          snakeHueStart: 180,
+          snakeHueStep: 18,
+          obstacleColor: '#f43f5e'
+        },
+        tropical: {
+          bgA: '#0d2622',
+          bgB: '#12332d',
+          gridStroke: 'rgba(163, 230, 53, 0.08)',
+          wallBorder: '#a3e635',
+          snakeHueStart: 48,
+          snakeHueStep: 12,
+          obstacleColor: '#fb7185'
+        }
+      };
+
+      const FRUITS = [
+        { name: 'سیب یاقوتی', color: '#ff4d6d', glow: '#ff758f', points: 10 },
+        { name: 'پرتقال طلایی', color: '#ff9e00', glow: '#ffb703', points: 15 },
+        { name: 'بلوبری نئونی', color: '#00bbf9', glow: '#48cae4', points: 15 },
+        { name: 'انگور بنفش', color: '#9b5de5', glow: '#c77dff', points: 20 },
+        { name: 'زمرد جادویی', color: '#00f5d4', glow: '#80ffdb', points: 25 }
+      ];
+
+      // Persistent high-precision stats
+      const STORAGE_KEY = 'colorful-snake-precision-v1';
+      let stats = loadStats();
+
+      function defaultStats() {
+        return {
+          bestScore: 0,
+          wins: 0,
+          totalErrors: 0,
+          roundsPlayed: 0,
+          wallHits: 0,
+          selfHits: 0,
+          obstacleHits: 0,
+          illegalTurns: 0,
+          validTurns: 0,
+          nearMisses: 0,
+          logs: []
+        };
+      }
+
+      function loadStats() {
+        try {
+          const raw = localStorage.getItem(STORAGE_KEY);
+          if (!raw) return defaultStats();
+          return { ...defaultStats(), ...JSON.parse(raw) };
+        } catch {
+          return defaultStats();
+        }
+      }
+
+      function saveStats() {
+        try {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(stats));
+        } catch {}
+      }
+
+      // Web Audio synthesizer for crisp win/eat/error feedback
+      let audioCtx = null;
+      function playTone(type) {
+        try {
+          if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+          if (audioCtx.state === 'suspended') audioCtx.resume();
+          const now = audioCtx.currentTime;
+
+          if (type === 'eat') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, now);
+            osc.frequency.exponentialRampToValueAtTime(880, now + 0.09);
+            gain.gain.setValueAtTime(0.12, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+            osc.connect(gain).connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.1);
+          } else if (type === 'error') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'sawtooth';
+            osc.frequency.setValueAtTime(210, now);
+            osc.frequency.linearRampToValueAtTime(95, now + 0.28);
+            gain.gain.setValueAtTime(0.15, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.3);
+            osc.connect(gain).connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.3);
+          } else if (type === 'warn') {
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(300, now);
+            gain.gain.setValueAtTime(0.07, now);
+            gain.gain.exponentialRampToValueAtTime(0.001, now + 0.07);
+            osc.connect(gain).connect(audioCtx.destination);
+            osc.start(now);
+            osc.stop(now + 0.07);
+          } else if (type === 'win') {
+            [523.25, 659.25, 783.99, 1046.5].forEach((freq, idx) => {
+              const osc = audioCtx.createOscillator();
+              const gain = audioCtx.createGain();
+              osc.type = 'triangle';
+              osc.frequency.setValueAtTime(freq, now + idx * 0.09);
+              gain.gain.setValueAtTime(0.14, now + idx * 0.09);
+              gain.gain.exponentialRampToValueAtTime(0.001, now + idx * 0.09 + 0.22);
+              osc.connect(gain).connect(audioCtx.destination);
+              osc.start(now + idx * 0.09);
+              osc.stop(now + idx * 0.09 + 0.23);
+            });
+          }
+        } catch {}
+      }
+
+      // DOM Elements
+      const scoreVal = document.getElementById('scoreVal');
+      const bestVal = document.getElementById('bestVal');
+      const winsVal = document.getElementById('winsVal');
+      const errorsVal = document.getElementById('errorsVal');
+      const targetLabel = document.getElementById('targetLabel');
+      const progressText = document.getElementById('progressText');
+      const progressFill = document.getElementById('progressFill');
+      const livePosText = document.getElementById('livePosText');
+
+      const overlay = document.getElementById('overlay');
+      const overlayBadge = document.getElementById('overlayBadge');
+      const overlayTitle = document.getElementById('overlayTitle');
+      const overlayDesc = document.getElementById('overlayDesc');
+      const diagBox = document.getElementById('diagBox');
+      const diagResult = document.getElementById('diagResult');
+      const diagReason = document.getElementById('diagReason');
+      const diagCoord = document.getElementById('diagCoord');
+      const diagTime = document.getElementById('diagTime');
+
+      const startBtn = document.getElementById('startBtn');
+      const continueEndlessBtn = document.getElementById('continueEndlessBtn');
+      const pauseBtn = document.getElementById('pauseBtn');
+      const restartBtn = document.getElementById('restartBtn');
+      const goalSelect = document.getElementById('goalSelect');
+      const speedSelect = document.getElementById('speedSelect');
+      const obstacleToggle = document.getElementById('obstacleToggle');
+      const resetStatsBtn = document.getElementById('resetStatsBtn');
+
+      // Telemetry DOM
+      const winRateVal = document.getElementById('winRateVal');
+      const accuracyVal = document.getElementById('accuracyVal');
+      const nearMissVal = document.getElementById('nearMissVal');
+      const illegalTurnVal = document.getElementById('illegalTurnVal');
+      const cntWall = document.getElementById('cntWall');
+      const cntSelf = document.getElementById('cntSelf');
+      const cntObs = document.getElementById('cntObs');
+      const cntTurn = document.getElementById('cntTurn');
+      const barWall = document.getElementById('barWall');
+      const barSelf = document.getElementById('barSelf');
+      const barObs = document.getElementById('barObs');
+      const barTurn = document.getElementById('barTurn');
+      const logList = document.getElementById('logList');
+      const totalRoundsBadge = document.getElementById('totalRoundsBadge');
+
+      // Game State
+      let currentTheme = 'rainbow';
+      let snake = [];
+      let dir = { x: 1, y: 0 };
+      let inputQueue = []; // Buffered input queue for 100% turn accuracy
+      let food = null;
+      let obstacles = [];
+      let particles = [];
+      let crashMarker = null; // Highlights exact cell & vector of collision
+
+      let score = 0;
+      let eatenCount = 0;
+      let endlessAfterWin = false;
+      let state = 'ready'; // ready | running | paused | won | over
+      let roundStartTime = 0;
+      let accumulatedRunMs = 0;
+      let lastTickTime = 0;
+      let animFrameId = null;
+
+      function getTargetFruits() {
+        const val = goalSelect.value;
+        if (val === 'full') {
+          return GRID * GRID - 3 - obstacles.length;
+        }
+        return Number(val);
+      }
+
+      function initBoard() {
+        snake = [
+          { x: 6, y: 9 },
+          { x: 5, y: 9 },
+          { x: 4, y: 9 }
+        ];
+        dir = { x: 1, y: 0 };
+        inputQueue = [];
+        score = 0;
+        eatenCount = 0;
+        endlessAfterWin = false;
+        crashMarker = null;
+        particles = [];
+        accumulatedRunMs = 0;
+
+        obstacles = [];
+        if (obstacleToggle.checked) {
+          generateObstacles(8);
+        }
+
+        spawnFood();
+        updateHUD();
+        renderFrame(performance.now());
+      }
+
+      function generateObstacles(count) {
+        let tries = 0;
+        while (obstacles.length < count && tries < 300) {
+          tries++;
+          const ox = Math.floor(Math.random() * (GRID - 2)) + 1;
+          const oy = Math.floor(Math.random() * (GRID - 2)) + 1;
+          // Keep spawn lane clear around starting snake (row 9, x 3..10)
+          if (oy === 9 && ox >= 3 && ox <= 11) continue;
+          if (snake.some(s => s.x === ox && s.y === oy)) continue;
+          if (obstacles.some(o => o.x === ox && o.y === oy)) continue;
+          obstacles.push({ x: ox, y: oy });
+        }
+      }
+
+      function spawnFood() {
+        const freeCells = [];
+        for (let y = 0; y < GRID; y++) {
+          for (let x = 0; x < GRID; x++) {
+            const onSnake = snake.some(s => s.x === x && s.y === y);
+            const onObs = obstacles.some(o => o.x === x && o.y === y);
+            if (!onSnake && !onObs) freeCells.push({ x, y });
+          }
+        }
+        if (freeCells.length === 0) {
+          food = null;
+          return;
+        }
+        const spot = freeCells[Math.floor(Math.random() * freeCells.length)];
+        const fruitType = FRUITS[Math.floor(Math.random() * FRUITS.length)];
+        food = { ...spot, ...fruitType };
+      }
+
+      function spawnParticles(cx, cy, color, count = 14) {
+        for (let i = 0; i < count; i++) {
+          const angle = (Math.PI * 2 * i) / count + Math.random() * 0.4;
+          const speed = 1.4 + Math.random() * 2.8;
+          particles.push({
+            x: cx,
+            y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: 1,
+            color
+          });
+        }
+      }
+
+      function formatDuration(ms) {
+        const sec = (ms / 1000).toFixed(2);
+        return `${faNum(sec)} ثانیه`;
+      }
+
+      function nowClock() {
+        const d = new Date();
+        return d.toTimeString().slice(0, 8) + '.' + String(d.getMilliseconds()).padStart(3, '0');
+      }
+
+      function addEventLog(kind, title, meta) {
+        const entry = {
+          kind,
+          title,
+          meta,
+          time: nowClock()
+        };
+        stats.logs.unshift(entry);
+        if (stats.logs.length > 30) stats.logs.pop();
+        saveStats();
+        renderTelemetry();
+      }
+
+      // High-precision Turn Input Handler
+      function queueDirection(nx, ny) {
+        if (state === 'ready' || state === 'over' || state === 'won') {
+          // Allow starting with any valid direction except reversing into own neck (left)
+          if (state !== 'ready') initBoard();
+          if (nx === -1 && ny === 0) {
+            // Reversing directly into body on initial start: record illegal reverse warning
+            recordIllegalReverse();
+            return;
+          }
+          inputQueue.push({ x: nx, y: ny });
+          startGame();
+          return;
+        }
+
+        if (state !== 'running') return;
+
+        // Reference direction is last queued turn or current active direction
+        const lastPlanned = inputQueue.length > 0 ? inputQueue[inputQueue.length - 1] : dir;
+
+        // Ignore duplicate same-direction key press
+        if (lastPlanned.x === nx && lastPlanned.y === ny) return;
+
+        // Detect exact 180-degree illegal reverse turn attempt!
+        if (lastPlanned.x === -nx && lastPlanned.y === -ny) {
+          recordIllegalReverse();
+          return;
+        }
+
+        // Buffer up to 2 rapid turns per tick so fast corners never fail
+        if (inputQueue.length < 2) {
+          inputQueue.push({ x: nx, y: ny });
+          stats.validTurns++;
+          saveStats();
+          renderTelemetry();
+        }
+      }
+
+      function recordIllegalReverse() {
+        stats.illegalTurns++;
+        stats.totalErrors++;
+        playTone('warn');
+        const head = snake[0] || { x: 0, y: 0 };
+        addEventLog(
+          'warn',
+          '🚫 خطای فرمان معکوس ۱۸۰ درجه (مسدود شد)',
+          `سر مار در (${head.x}, ${head.y}) — سامانه ایمنی از برخورد فوری به گردن جلوگیری کرد.`
+        );
+        updateHUD();
+      }
+
+      // Exact Collision & Win Step
+      function stepGame() {
+        if (inputQueue.length > 0) {
+          dir = inputQueue.shift();
+        }
+
+        const head = snake[0];
+        const nextHead = { x: head.x + dir.x, y: head.y + dir.y };
+        const willEat = food && nextHead.x === food.x && nextHead.y === food.y;
+
+        // 1. Check exact Wall Boundary Collision
+        if (nextHead.x < 0 || nextHead.x >= GRID || nextHead.y < 0 || nextHead.y >= GRID) {
+          let wallSide = '';
+          if (nextHead.x < 0) wallSide = 'دیوار چپ';
+          else if (nextHead.x >= GRID) wallSide = 'دیوار راست';
+          else if (nextHead.y < 0) wallSide = 'دیوار بالا';
+          else wallSide = 'دیوار پایین';
+
+          triggerLoss(
+            'wall',
+            `برخورد به ${wallSide}`,
+            head,
+            nextHead
+          );
+          return;
+        }
+
+        // 2. Check Obstacle Collision
+        if (obstacles.some(o => o.x === nextHead.x && o.y === nextHead.y)) {
+          triggerLoss(
+            'obstacle',
+            'برخورد مستقیم با مانع رنگی',
+            head,
+            nextHead
+          );
+          return;
+        }
+
+        // 3. High-Precision Self-Body Collision:
+        // Note: If not eating, the tail tip (last element) vacates its cell simultaneously,
+        // so moving into the vacating tail tip is 100% legal and NOT a false-positive error!
+        const bodyCheckLimit = willEat ? snake.length : snake.length - 1;
+        let hitSegmentIndex = -1;
+        for (let i = 0; i < bodyCheckLimit; i++) {
+          if (snake[i].x === nextHead.x && snake[i].y === nextHead.y) {
+            hitSegmentIndex = i;
+            break;
+          }
+        }
+
+        if (hitSegmentIndex !== -1) {
+          triggerLoss(
+            'self',
+            `برخورد به قطعه شماره ${faNum(hitSegmentIndex + 1)} بدن خود`,
+            head,
+            nextHead
+          );
+          return;
+        }
+
+        // Advance Snake
+        snake.unshift(nextHead);
+
+        if (willEat) {
+          eatenCount++;
+          score += food.points;
+          if (score > stats.bestScore) {
+            stats.bestScore = score;
+          }
+          playTone('eat');
+          spawnParticles(
+            (nextHead.x + 0.5) * CELL,
+            (nextHead.y + 0.5) * CELL,
+            food.color,
+            18
+          );
+
+          // Check Win Condition (if not already in endless post-win mode)
+          const target = getTargetFruits();
+          if (!endlessAfterWin && eatenCount >= target) {
+            triggerWin(nextHead, target);
+            updateHUD();
+            return;
+          }
+
+          spawnFood();
+          if (!food) {
+            // Entire board filled! Ultimate win
+            triggerWin(nextHead, eatenCount, true);
+            updateHUD();
+            return;
+          }
+        } else {
+          snake.pop();
+        }
+
+        // Check Near-Miss Telemetry (1 cell away from obstacle or wall when turning or moving close)
+        checkNearMiss(nextHead);
+
+        updateHUD();
+      }
+
+      function checkNearMiss(head) {
+        const nextX = head.x + dir.x;
+        const nextY = head.y + dir.y;
+        const dangerAhead =
+          nextX < 0 || nextX >= GRID || nextY < 0 || nextY >= GRID ||
+          obstacles.some(o => o.x === nextX && o.y === nextY) ||
+          snake.slice(0, -1).some(s => s.x === nextX && s.y === nextY);
+
+        if (dangerAhead) {
+          stats.nearMisses++;
+          saveStats();
+          renderTelemetry();
+        }
+      }
+
+      function getElapsedRunTime() {
+        if (state === 'running') {
+          return accumulatedRunMs + (performance.now() - roundStartTime);
+        }
+        return accumulatedRunMs;
+      }
+
+      function triggerLoss(type, reasonText, fromCell, impactCell) {
+        const duration = getElapsedRunTime();
+        state = 'over';
+        cancelAnimationFrame(animFrameId);
+
+        stats.roundsPlayed++;
+        stats.totalErrors++;
+        if (type === 'wall') stats.wallHits++;
+        else if (type === 'self') stats.selfHits++;
+        else if (type === 'obstacle') stats.obstacleHits++;
+
+        crashMarker = {
+          from: { ...fromCell },
+          to: {
+            x: Math.max(0, Math.min(GRID - 1, impactCell.x)),
+            y: Math.max(0, Math.min(GRID - 1, impactCell.y))
+          },
+          rawImpact: { ...impactCell },
+          type
+        };
+
+        spawnParticles(
+          (fromCell.x + 0.5) * CELL,
+          (fromCell.y + 0.5) * CELL,
+          '#f43f5e',
+          24
+        );
+        playTone('error');
+
+        addEventLog(
+          'error',
+          `❌ ثبت خطا: ${reasonText}`,
+          `مختصات برخورد: (${impactCell.x}, ${impactCell.y}) | امتیاز: ${faNum(score)} | زمان: ${formatDuration(duration)}`
+        );
+
+        saveStats();
+        updateHUD();
+        renderTelemetry();
+        renderFrame(performance.now());
+
+        showOverlay({
+          badgeClass: 'badge-error',
+          badgeText: 'ثبت خطای برخورد',
+          title: 'سوختی! خطا ثبت شد 💥',
+          desc: 'جزئیات دقیق محل برخورد روی صفحه علامت‌گذاری و در گزارش ثبت شد.',
+          resultText: 'شکست (ثبت خطا)',
+          reason: reasonText,
+          coord: `(${impactCell.x}, ${impactCell.y}) ← از (${fromCell.x}, ${fromCell.y})`,
+          timeInfo: `${formatDuration(duration)} | دقت: ${calcAccuracyPercent()}٪`,
+          btnText: 'بازی مجدد',
+          showEndless: false
+        });
+      }
+
+      function triggerWin(winCell, targetReached, fullBoard = false) {
+        const duration = getElapsedRunTime();
+        accumulatedRunMs = duration;
+        state = 'won';
+        cancelAnimationFrame(animFrameId);
+
+        stats.wins++;
+        stats.roundsPlayed++;
+        if (score > stats.bestScore) stats.bestScore = score;
+
+        spawnParticles((winCell.x + 0.5) * CELL, (winCell.y + 0.5) * CELL, '#a3e635', 32);
+        spawnParticles(canvas.width * 0.25, canvas.height * 0.3, '#22d3ee', 22);
+        spawnParticles(canvas.width * 0.75, canvas.height * 0.3, '#ec4899', 22);
+        playTone('win');
+
+        const winReason = fullBoard
+          ? 'پر کردن کامل ۱۰۰٪ خانه‌های جدول!'
+          : `رسیدن دقیق به هدف ${faNum(targetReached)} میوه بدون برخورد`;
+
+        addEventLog(
+          'win',
+          `🏆 ثبت برد قطعی! (${faNum(score)} امتیاز)`,
+          `${winReason} | مختصات برد: (${winCell.x}, ${winCell.y}) | زمان: ${formatDuration(duration)}`
+        );
+
+        saveStats();
+        updateHUD();
+        renderTelemetry();
+        renderFrame(performance.now());
+
+        showOverlay({
+          badgeClass: 'badge-win',
+          badgeText: 'برد ثبت شد 🏆',
+          title: 'تبریک! برنده شدی 🎉',
+          desc: 'برد شما با موفقیت و دقت کامل در کارنامه ثبت شد. می‌خواهی دور جدید شروع کنی یا همین بازی را بی‌نهایت ادامه دهی؟',
+          resultText: 'پیروزی کامل 🏆',
+          reason: winReason,
+          coord: `(${winCell.x}, ${winCell.y}) | طول مار: ${faNum(snake.length)}`,
+          timeInfo: `${formatDuration(duration)} | دقت: ${calcAccuracyPercent()}٪`,
+          btnText: 'دور جدید',
+          showEndless: !fullBoard
+        });
+      }
+
+      function showOverlay({
+        badgeClass,
+        badgeText,
+        title,
+        desc,
+        resultText,
+        reason,
+        coord,
+        timeInfo,
+        btnText,
+        showEndless
+      }) {
+        overlayBadge.className = `badge-status ${badgeClass}`;
+        overlayBadge.textContent = badgeText;
+        overlayTitle.textContent = title;
+        overlayDesc.textContent = desc;
+        startBtn.textContent = btnText;
+
+        if (resultText) {
+          diagBox.classList.remove('hidden');
+          diagResult.textContent = resultText;
+          diagResult.style.color = badgeClass === 'badge-win' ? '#34d399' : '#fb7185';
+          diagReason.textContent = reason;
+          diagCoord.textContent = coord;
+          diagTime.textContent = timeInfo;
+        } else {
+          diagBox.classList.add('hidden');
+        }
+
+        if (showEndless) {
+          continueEndlessBtn.classList.remove('hidden');
+        } else {
+          continueEndlessBtn.classList.add('hidden');
+        }
+
+        overlay.classList.remove('hidden');
+      }
+
+      function startGame() {
+        if (state === 'over' || state === 'won') {
+          initBoard();
+        }
+        state = 'running';
+        overlay.classList.add('hidden');
+        roundStartTime = performance.now();
+        lastTickTime = performance.now();
+        cancelAnimationFrame(animFrameId);
+        animFrameId = requestAnimationFrame(gameLoop);
+      }
+
+      function continueEndless() {
+        if (state !== 'won') return;
+        endlessAfterWin = true;
+        spawnFood();
+        state = 'running';
+        overlay.classList.add('hidden');
+        roundStartTime = performance.now();
+        lastTickTime = performance.now();
+        updateHUD();
+        cancelAnimationFrame(animFrameId);
+        animFrameId = requestAnimationFrame(gameLoop);
+      }
+
+      function togglePause() {
+        if (state === 'running') {
+          accumulatedRunMs += performance.now() - roundStartTime;
+          state = 'paused';
+          cancelAnimationFrame(animFrameId);
+          showOverlay({
+            badgeClass: 'badge-pause',
+            badgeText: 'توقف موقت',
+            title: 'بازی متوقف شد ⏸️',
+            desc: 'زمان و موقعیت دقیق مار ذخیره شده است. هر زمان آماده بودید ادامه دهید.',
+            resultText: null,
+            btnText: 'ادامه بازی',
+            showEndless: false
+          });
+        } else if (state === 'paused') {
+          state = 'running';
+          overlay.classList.add('hidden');
+          roundStartTime = performance.now();
+          lastTickTime = performance.now();
+          animFrameId = requestAnimationFrame(gameLoop);
+        }
+      }
+
+      function gameLoop(timestamp) {
+        if (state !== 'running') return;
+
+        const tickInterval = Number(speedSelect.value);
+        if (timestamp - lastTickTime >= tickInterval) {
+          lastTickTime = timestamp;
+          stepGame();
+          if (state !== 'running') return;
+        }
+
+        renderFrame(timestamp);
+        animFrameId = requestAnimationFrame(gameLoop);
+      }
+
+      // Colorful Canvas Rendering
+      function renderFrame(timestamp) {
+        const theme = THEMES[currentTheme];
+
+        // 1. Vibrant Checkerboard Grid
+        for (let y = 0; y < GRID; y++) {
+          for (let x = 0; x < GRID; x++) {
+            const isEven = (x + y) % 2 === 0;
+            if (currentTheme === 'rainbow') {
+              const subtleHue = (x * 10 + y * 10) % 360;
+              ctx.fillStyle = isEven
+                ? `hsl(${subtleHue}, 34%, 13%)`
+                : `hsl(${subtleHue}, 34%, 15.5%)`;
+            } else {
+              ctx.fillStyle = isEven ? theme.bgA : theme.bgB;
+            }
+            ctx.fillRect(x * CELL, y * CELL, CELL, CELL);
+          }
+        }
+
+        // Subtle crisp grid lines
+        ctx.strokeStyle = theme.gridStroke;
+        ctx.lineWidth = 1;
+        for (let i = 0; i <= GRID; i++) {
+          ctx.beginPath();
+          ctx.moveTo(i * CELL, 0);
+          ctx.lineTo(i * CELL, canvas.height);
+          ctx.stroke();
+          ctx.beginPath();
+          ctx.moveTo(0, i * CELL);
+          ctx.lineTo(canvas.width, i * CELL);
+          ctx.stroke();
+        }
+
+        // Glowing border frame
+        ctx.save();
+        ctx.strokeStyle = theme.wallBorder;
+        ctx.lineWidth = 3;
+        ctx.strokeRect(1.5, 1.5, canvas.width - 3, canvas.height - 3);
+        ctx.restore();
+
+        // 2. Obstacles
+        obstacles.forEach(obs => {
+          const ox = obs.x * CELL + 3;
+          const oy = obs.y * CELL + 3;
+          const ow = CELL - 6;
+          ctx.save();
+          ctx.fillStyle = theme.obstacleColor;
+          ctx.shadowColor = theme.obstacleColor;
+          ctx.shadowBlur = 10;
+          ctx.beginPath();
+          ctx.roundRect(ox, oy, ow, ow, 7);
+          ctx.fill();
+
+          // Diagonal hazard stripes
+          ctx.strokeStyle = 'rgba(9, 13, 26, 0.55)';
+          ctx.lineWidth = 2.5;
+          ctx.beginPath();
+          ctx.moveTo(ox + 5, oy + ow - 5);
+          ctx.lineTo(ox + ow - 5, oy + 5);
+          ctx.stroke();
+          ctx.restore();
+        });
+
+        // 3. Pulsing Colorful Fruit
+        if (food) {
+          const pulse = 1 + Math.sin(timestamp / 180) * 0.09;
+          const fx = (food.x + 0.5) * CELL;
+          const fy = (food.y + 0.5) * CELL;
+          const radius = CELL * 0.36 * pulse;
+
+          ctx.save();
+          ctx.shadowColor = food.glow;
+          ctx.shadowBlur = 20;
+          ctx.fillStyle = food.color;
+          ctx.beginPath();
+          ctx.arc(fx, fy + 1, radius, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Gloss highlight
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.55)';
+          ctx.beginPath();
+          ctx.arc(fx - radius * 0.3, fy - radius * 0.25, radius * 0.26, 0, Math.PI * 2);
+          ctx.fill();
+
+          // Leaf
+          ctx.fillStyle = '#a3e635';
+          ctx.beginPath();
+          ctx.ellipse(fx + 4, fy - radius - 2, 5, 2.6, -0.5, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+
+        // 4. Rainbow / Multi-color Gradient Snake
+        for (let i = snake.length - 1; i >= 0; i--) {
+          const seg = snake[i];
+          const isHead = i === 0;
+          const hue = (theme.snakeHueStart + i * theme.snakeHueStep) % 360;
+          const pad = isHead ? 2 : 3.2;
+          const sx = seg.x * CELL + pad;
+          const sy = seg.y * CELL + pad;
+          const sw = CELL - pad * 2;
+
+          ctx.save();
+          ctx.fillStyle = isHead
+            ? `hsl(${hue}, 95%, 62%)`
+            : `hsl(${hue}, 88%, 54%)`;
+          if (isHead) {
+            ctx.shadowColor = `hsl(${hue}, 95%, 62%)`;
+            ctx.shadowBlur = 14;
+          }
+          ctx.beginPath();
+          ctx.roundRect(sx, sy, sw, sw, isHead ? 9 : 7);
+          ctx.fill();
+
+          // Inner sheen
+          ctx.shadowBlur = 0;
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.22)';
+          ctx.beginPath();
+          ctx.roundRect(sx + 3, sy + 3, sw - 6, sw * 0.36, 4);
+          ctx.fill();
+
+          // Expressive eyes on head
+          if (isHead) {
+            const cx = (seg.x + 0.5) * CELL;
+            const cy = (seg.y + 0.5) * CELL;
+            const offsetForward = 5;
+            const offsetSide = 5.2;
+
+            let e1x, e1y, e2x, e2y;
+            if (dir.x !== 0) {
+              e1x = e2x = cx + dir.x * offsetForward;
+              e1y = cy - offsetSide;
+              e2y = cy + offsetSide;
+            } else {
+              e1y = e2y = cy + dir.y * offsetForward;
+              e1x = cx - offsetSide;
+              e2x = cx + offsetSide;
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath();
+            ctx.arc(e1x, e1y, 3.3, 0, Math.PI * 2);
+            ctx.arc(e2x, e2y, 3.3, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#090d1a';
+            ctx.beginPath();
+            ctx.arc(e1x + dir.x * 1, e1y + dir.y * 1, 1.8, 0, Math.PI * 2);
+            ctx.arc(e2x + dir.x * 1, e2y + dir.y * 1, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+          }
+          ctx.restore();
+        }
+
+        // 5. High-Precision Crash Diagnostic Marker on Canvas
+        if (crashMarker) {
+          const cx = (crashMarker.to.x + 0.5) * CELL;
+          const cy = (crashMarker.to.y + 0.5) * CELL;
+          ctx.save();
+          ctx.strokeStyle = '#f43f5e';
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(cx, cy, CELL * 0.44, 0, Math.PI * 2);
+          ctx.stroke();
+
+          ctx.beginPath();
+          ctx.moveTo(cx - 7, cy - 7);
+          ctx.lineTo(cx + 7, cy + 7);
+          ctx.moveTo(cx + 7, cy - 7);
+          ctx.lineTo(cx - 7, cy + 7);
+          ctx.stroke();
+          ctx.restore();
+        }
+
+        // 6. Sparkle Particles
+        for (let i = particles.length - 1; i >= 0; i--) {
+          const p = particles[i];
+          p.x += p.vx;
+          p.y += p.vy;
+          p.life -= 0.04;
+          if (p.life <= 0) {
+            particles.splice(i, 1);
+            continue;
+          }
+          ctx.save();
+          ctx.globalAlpha = p.life;
+          ctx.fillStyle = p.color;
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, 3.2 * p.life, 0, Math.PI * 2);
+          ctx.fill();
+          ctx.restore();
+        }
+      }
+
+      // HUD & Analytics Updaters
+      function calcAccuracyPercent() {
+        const totalCmds = stats.validTurns + stats.illegalTurns;
+        if (totalCmds === 0) return faNum(100);
+        return faNum(Math.round((stats.validTurns / totalCmds) * 100));
+      }
+
+      function updateHUD() {
+        scoreVal.textContent = faNum(score);
+        bestVal.textContent = faNum(stats.bestScore);
+        winsVal.textContent = faNum(stats.wins);
+        errorsVal.textContent = faNum(stats.totalErrors);
+
+        const target = getTargetFruits();
+        if (endlessAfterWin) {
+          targetLabel.textContent = 'حالت رکوردزنی بی‌نهایت (برد ثبت شده 🏆)';
+          progressText.textContent = `${faNum(eatenCount)} میوه خورده شده`;
+          progressFill.style.width = '100%';
+        } else {
+          const pct = Math.min(100, Math.round((eatenCount / target) * 100));
+          targetLabel.textContent = `پیشرفت تا برد مرحله (هدف: ${faNum(target)} میوه)`;
+          progressText.textContent = `${faNum(eatenCount)} از ${faNum(target)} (${faNum(pct)}٪)`;
+          progressFill.style.width = `${pct}%`;
+        }
+
+        if (snake.length > 0) {
+          livePosText.textContent = `موقعیت سر مار: (${faNum(snake[0].x)}, ${faNum(snake[0].y)}) | طول: ${faNum(snake.length)}`;
+        }
+      }
+
+      function renderTelemetry() {
+        const winRate = stats.roundsPlayed > 0
+          ? Math.round((stats.wins / stats.roundsPlayed) * 100)
+          : 0;
+
+        winRateVal.textContent = `${faNum(winRate)}٪`;
+        accuracyVal.textContent = `${calcAccuracyPercent()}٪`;
+        nearMissVal.textContent = faNum(stats.nearMisses);
+        illegalTurnVal.textContent = faNum(stats.illegalTurns);
+        totalRoundsBadge.textContent = `${faNum(stats.roundsPlayed)} دور ثبت‌شده`;
+
+        const maxErr = Math.max(1, stats.wallHits, stats.selfHits, stats.obstacleHits, stats.illegalTurns);
+        cntWall.textContent = faNum(stats.wallHits);
+        cntSelf.textContent = faNum(stats.selfHits);
+        cntObs.textContent = faNum(stats.obstacleHits);
+        cntTurn.textContent = faNum(stats.illegalTurns);
+
+        barWall.style.width = `${(stats.wallHits / maxErr) * 100}%`;
+        barSelf.style.width = `${(stats.selfHits / maxErr) * 100}%`;
+        barObs.style.width = `${(stats.obstacleHits / maxErr) * 100}%`;
+        barTurn.style.width = `${(stats.illegalTurns / maxErr) * 100}%`;
+
+        if (stats.logs.length === 0) {
+          logList.innerHTML = `<div class="empty-log">هنوز رویدادی ثبت نشده است. بازی را شروع کنید تا بردها، خطاها و مختصات دقیق اینجا ثبت شوند!</div>`;
+        } else {
+          logList.innerHTML = stats.logs
+            .map(item => `
+              <div class="log-entry ${item.kind}">
+                <div class="log-head">
+                  <span>${item.title}</span>
+                  <span class="log-time">${item.time}</span>
+                </div>
+                <div class="log-meta">${item.meta}</div>
+              </div>
+            `)
+            .join('');
+        }
+      }
+
+      // Keyboard Controls
+      const KEY_DIRS = {
+        ArrowUp: [0, -1], w: [0, -1], W: [0, -1],
+        ArrowDown: [0, 1], s: [0, 1], S: [0, 1],
+        ArrowLeft: [-1, 0], a: [-1, 0], A: [-1, 0],
+        ArrowRight: [1, 0], d: [1, 0], D: [1, 0]
+      };
+
+      document.addEventListener('keydown', (e) => {
+        if (KEY_DIRS[e.key]) {
+          e.preventDefault();
+          const [nx, ny] = KEY_DIRS[e.key];
+          queueDirection(nx, ny);
+        } else if (e.code === 'Space') {
+          e.preventDefault();
+          if (state === 'running' || state === 'paused') {
+            togglePause();
+          } else {
+            startGame();
+          }
+        }
+      });
+
+      // Touch D-Pad & Swipe on Canvas
+      document.querySelectorAll('.dpad button').forEach(btn => {
+        btn.addEventListener('pointerdown', (e) => {
+          e.preventDefault();
+          const map = {
+            up: [0, -1],
+            down: [0, 1],
+            left: [-1, 0],
+            right: [1, 0]
+          };
+          queueDirection(...map[btn.dataset.dir]);
+        });
+      });
+
+      let touchStart = null;
+      canvas.addEventListener('pointerdown', (e) => {
+        touchStart = { x: e.clientX, y: e.clientY };
+      });
+      canvas.addEventListener('pointerup', (e) => {
+        if (!touchStart) return;
+        const dx = e.clientX - touchStart.x;
+        const dy = e.clientY - touchStart.y;
+        touchStart = null;
+        if (Math.hypot(dx, dy) < 22) return;
+        if (Math.abs(dx) > Math.abs(dy)) {
+          queueDirection(dx > 0 ? 1 : -1, 0);
+        } else {
+          queueDirection(0, dy > 0 ? 1 : -1);
+        }
+      });
+
+      // UI Buttons
+      startBtn.addEventListener('click', () => {
+        if (state === 'paused') togglePause();
+        else startGame();
+      });
+
+      continueEndlessBtn.addEventListener('click', continueEndless);
+      pauseBtn.addEventListener('click', togglePause);
+
+      restartBtn.addEventListener('click', () => {
+        initBoard();
+        startGame();
+      });
+
+      goalSelect.addEventListener('change', () => {
+        if (state === 'ready') initBoard();
+        else updateHUD();
+      });
+
+      obstacleToggle.addEventListener('change', () => {
+        initBoard();
+        if (state === 'running') startGame();
+      });
+
+      document.querySelectorAll('.theme-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          currentTheme = btn.dataset.theme;
+          renderFrame(performance.now());
+        });
+      });
+
+      resetStatsBtn.addEventListener('click', () => {
+        stats = defaultStats();
+        saveStats();
+        updateHUD();
+        renderTelemetry();
+      });
+
+      // Initialize
+      initBoard();
+      renderTelemetry();
+    })();
+  </script>
 </body>
 </html>
